@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Task = require("../models/Task.js");
-const User = require("../models/User.js");
 
 const { validateRequest } = require("../middlewares/validation");
 const { authorizeManager } = require("../middlewares/authorization");
@@ -60,7 +59,7 @@ router.put(
   ],
   validateRequest,
   authorizeManager,
-  async (req, res, next) => {
+  async (req, res) => {
     try {
       const task = await Task.findByIdAndUpdate(
         req.params.id,
@@ -72,22 +71,9 @@ router.put(
         return res.status(404).json({ message: "Task not found" });
       }
 
-      if (req.body.assigneeId) {
-        const user = await Task.findOne({
-          _id: req.body.assigneeId,
-          isDeleted: false,
-        });
-
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
-        res.status(200).json(task);
-      } else {
-        res.json({ task });
-      }
-    } catch (error) {
-      next(error);
+      res.status(200).json(task);
+    } catch (err) {
+      res.status(400).json(err);
     }
   }
 );
