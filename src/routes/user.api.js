@@ -64,16 +64,11 @@ router.get(
   validateRequest,
   async (req, res, next) => {
     try {
-      const user = await User.findById(req.params.id).populate({
-        path: "tasks",
-        match: { isDeleted: false },
+      const tasks = await Task.find({
+        assignee: req.params.id,
       });
 
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      res.status(200).json(user);
+      res.status(200).json(tasks);
     } catch (error) {
       next(error);
     }

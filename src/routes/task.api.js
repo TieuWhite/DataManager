@@ -9,7 +9,7 @@ const { body, param } = require("express-validator");
 
 const router = express.Router();
 
-// Get all tasks
+// Get tasks
 router.get("/", async (req, res) => {
   try {
     const { taskName, _id } = req.query;
@@ -73,9 +73,9 @@ router.put(
       }
 
       if (req.body.assigneeId) {
-        const user = await User.findById(req.body.assigneeId).populate({
-          path: "tasks",
-          match: { isDeleted: false },
+        const user = await Task.findOne({
+          _id: req.body.assigneeId,
+          isDeleted: false,
         });
 
         if (!user) {
